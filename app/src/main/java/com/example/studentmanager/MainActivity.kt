@@ -12,10 +12,12 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,9 +31,10 @@ class MainActivity : AppCompatActivity() {
         val list = mutableListOf<Item>()
         list.add(Item("Nguyen Quoc Anh", "20225251"))
 
-        val adapter = ListAdapter(list)
-        val l = findViewById<ListView>(R.id.listV)
+        val adapter = List1Adapter(list)
+        val l = findViewById<RecyclerView>(R.id.listV)
         l.adapter = adapter
+        l.layoutManager = LinearLayoutManager(this)
 
         val add = findViewById<Button>(R.id.buttonAdd)
         add.setOnClickListener {
@@ -42,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             }
             else{
                 list.addFirst(Item(name.text.toString(), mssv.text.toString()))
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemInserted(0)
             }
         }
     }
