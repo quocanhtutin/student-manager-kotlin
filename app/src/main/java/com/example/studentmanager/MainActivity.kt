@@ -3,6 +3,7 @@ package com.example.studentmanager
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -103,40 +105,72 @@ class MainActivity : AppCompatActivity() {
 //        super.onCreateContextMenu(menu, v, menuInfo)
 //    }
 //
-//    override fun onContextItemSelected(item: MenuItem): Boolean {
-//        val info = item.menuInfo
-//        if (info is AdapterView.AdapterContextMenuInfo) {
-//            // It's an AdapterView, and we have the info we need
-//            val position = info.position
-//            val id = info.id
-//            // ... do something with position and id ...
-//            when (item.itemId) {
-//                R.id.action_update -> {
-//                    // Handle edit action
-//                    Log.d("TAG", "onContextItemSelected: $position")
-//                    return true
-//                }
-//                R.id.action_delete -> {
-//                    // Handle delete action
-//                    Log.d("TAG", "onContextItemSelected: $position")
-//
-//                    return true
-//                }
-//                R.id.action_call -> {
-//                    Log.d("TAG", "onContextItemSelected: $position")
-//
-//                    return true
-//                }
-//                R.id.action_email -> {
-//                    Log.d("TAG", "onContextItemSelected: $position")
-//
-//                    return true
-//                }
-//                else -> return super.onContextItemSelected(item)
-//            }
-//        } else {
-//            Log.d("TAG", "onContextItemSelected: $item")
-//            return super.onContextItemSelected(item)
-//        }
-//    }
+private val launcher2 = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    if (it.resultCode == Activity.RESULT_OK) {
+        val stt = it.data?.getIntExtra("stt", -1)
+        val name = it.data?.getStringExtra("nameUpdate")
+        val id = it.data?.getStringExtra("idUpdate")
+        val email = it.data?.getStringExtra("emailUpdate")
+        val phone = it.data?.getStringExtra("phoneUpdate")
+
+        val student = StudentModel(name!!, id!!, email!!, phone!!)
+        list.removeAt(stt!!)
+        list.add(stt, student)
+        adapter.notifyDataSetChanged()
+        Toast.makeText(this, "Student added", Toast.LENGTH_SHORT).show()
+
+    } else {
+        Toast.makeText(this, "Failed to add student", Toast.LENGTH_SHORT).show()
+    }
+}
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+            when (item.itemId) {
+                R.id.action_update -> {
+                    // Handle edit action
+                    val name = list[item.groupId].name
+                    val id = list[item.groupId].MSSV
+                    val email = list[item.groupId].email
+                    val phone = list[item.groupId].phone
+
+                    val intent = Intent(this, DetailActivity::class.java)
+                    intent.putExtra("stt", item.groupId)
+                    intent.putExtra("name", name)
+                    intent.putExtra("id", id)
+                    intent.putExtra("email", email)
+                    intent.putExtra("phone", phone)
+                    launcher2.launch(intent)
+                    return true
+                }
+                R.id.action_delete -> {
+                    // Handle delete action
+                    val build = AlertDialog.Builder(this)
+                        .setTitle("Confirm Delete")
+                        .setMessage("Are you sure you want to delete ${list[item.groupId].name}?")
+                        .setPositiveButton("Delete"){_, _ ->
+                            list.removeAt(item.groupId)
+                            adapter.notifyDataSetChanged()
+                        }
+                        .setNegativeButton("Cancel"){
+                            dialog, _ -> dialog.dismiss()
+                        }
+                        .setCancelable(false)
+
+                    val dialog = build.create()
+                    dialog.show()
+                    return true
+                }
+                R.id.action_call -> {
+                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${list[item.groupId].phone}"))
+                    startActivity(intent)
+                    return true
+                }
+                R.id.action_email -> {
+                    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:${list[item.groupId].email}"))
+                    startActivity(intent)
+                    return true
+                }
+                else -> return super.onContextItemSelected(item)
+            }
+
+    }
 }

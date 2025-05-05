@@ -5,8 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddStudentActivity">
-
+    tools:context=".DetailActivity">
     <EditText
         android:id="@+id/edtName"
         android:layout_width="0dp"
@@ -47,7 +46,7 @@
         android:background="@android:color/transparent"
         android:ems="10"
         android:hint="Email"
-        android:inputType="text|textEmailAddress"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtID" />
@@ -62,19 +61,20 @@
         android:background="@android:color/transparent"
         android:ems="10"
         android:hint="Phone"
-        android:inputType="phone"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtEmail" />
 
     <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="100dp"
+        android:id="@+id/btnUpdate"
+        android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:text="Add"
+        android:text="Update"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtPhone" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
